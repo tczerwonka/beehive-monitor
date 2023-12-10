@@ -13,6 +13,8 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
 #include <PubSubClient.h>
+//use esp8266 2.7.3 version or suffer the errors
+//board mgr url: http://arduino.esp8266.com/stable/package_esp8266com_index.json
 
 
 #include <Wire.h>
@@ -39,11 +41,14 @@ char charBuffer[32];
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-
+#define MOSFET_PIN 12
 
 void setup() {
   Serial.begin(115200);
   delay(10);
+
+  pinMode(MOSFET_PIN, OUTPUT);
+
 
 
   // We start by connecting to a WiFi network
@@ -74,6 +79,9 @@ void setup() {
   do_update();
   client.setServer(mqtt_host, mqtt_port);
   reconnect();
+
+  //enable power for MCP9600
+  digitalWrite(MOSFET_PIN, HIGH);
 
   //1wire
   sensors.begin();
@@ -134,33 +142,13 @@ void loop() {
   int nVoltageRaw;
   float fVoltage;
   String strBuffer;
+  int sleepval;
 
-
-
-  //get ADC
-  //voltage divider --
-  //  22k from battery to A0
-  //  47k from A0 to ground
-  //  my 4-wire setup measured 46.958k and 21.547k
-  nVoltageRaw = analogRead(A0);
-  fVoltage = (float)nVoltageRaw * 0.00460474;
-  //4.71v is the maximum to read
-  //will operate down to 2.5v but needs reset after
-  //fVoltage = (float)nVoltageRaw;
-  Serial.print("Battery voltage: ");
-  Serial.println(fVoltage);
-
-
-  strBuffer = String(fVoltage);
-  strBuffer.toCharArray(charBuffer, 10);
-  if (!client.publish(mqtt_topic_prefix_voltage, charBuffer, false)) {
-    ESP.restart();
-    delay(100);
-  }
 
 
   Serial.println("==========");
-
+  //5s delay after power on voltage
+  delay(5000);
   Serial.print("Hot Junction: ");
   Serial.println(mcp.readThermocouple());
   Serial.print("Cold Junction: ");
@@ -196,12 +184,58 @@ void loop() {
     delay(100);
   }
 
+  Serial.println("==========");
+  long rssi = WiFi.RSSI();
+  Serial.print("RSSI:");
+  Serial.println(rssi);
+
+  strBuffer = String(rssi);
+  strBuffer.toCharArray(charBuffer, 10);
+  if (!client.publish(mqtt_topic_prefix_rssi, charBuffer, false)) {
+    ESP.restart();
+    delay(100);
+  }
+
 
   Serial.println("==========");
 
+  //determine how long to sleep
+  //get ADC
+  //voltage divider --
+  //  22k from battery to A0
+  //  47k from A0 to ground
+  //  my 4-wire setup measured 46.958k and 21.547k
+  nVoltageRaw = analogRead(A0);
+  fVoltage = (float)nVoltageRaw * 0.00460474;
+  //4.71v is the maximum to read
+  //will operate down to 2.5v but needs reset after
+  //fVoltage = (float)nVoltageRaw;
+  Serial.print("Battery voltage: ");
+  Serial.println(fVoltage);
 
+  //report voltage
+  strBuffer = String(fVoltage);
+  strBuffer.toCharArray(charBuffer, 10);
+  if (!client.publish(mqtt_topic_prefix_voltage, charBuffer, false)) {
+    ESP.restart();
+    delay(100);
+  }
+
+  if (fVoltage < 3.7) {
+    //600 seconds
+    Serial.println("low volt: 600s sleep");
+    sleepval = 6e8;
+  } else {
+    //50 seconds
+    Serial.println("50s sleep");
+    sleepval = 5e7;
+  }
+
+  //turn off power
+  digitalWrite(MOSFET_PIN, LOW);
   delay(1000);
-  ESP.deepSleep(5e7); /* Sleep for 50 seconds */
+
+  ESP.deepSleep(sleepval); /* Sleep for 50 seconds */
 
   if (WiFi.status() != WL_CONNECTED) {
     ESP.restart();
