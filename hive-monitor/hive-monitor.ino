@@ -17,6 +17,22 @@
 //board mgr url: http://arduino.esp8266.com/stable/package_esp8266com_index.json
 
 
+/******************************************************************************/
+//HX711 loadcell
+//using https://github.com/RobTillaart/HX711
+//use scale.set_offset(4294465165); and scale.set_scale(-21.719906);
+//using an xlr connector because I have them
+//shield - ground
+//2 - vcc
+//1 SCK / green
+//3 DT / yellow
+#include <HX711.h>
+HX711 scale;
+uint8_t dataPin  = 9; //SD2 / yellow / SCK
+uint8_t clockPin = 10; //SD3 / green / DT
+
+
+
 #include <Wire.h>
 #include <Adafruit_I2CDevice.h>
 #include <Adafruit_I2CRegister.h>
@@ -85,6 +101,14 @@ void setup() {
 
   //1wire
   sensors.begin();
+
+  //load cell setup
+  scale.begin(dataPin, clockPin);
+  //these values from the calibration code for this library in github
+  scale.set_offset(4294465165); 
+  scale.set_scale(-21.719906);
+  //reset the scale to zero = 0
+  //scale.tare(0);
 
 
   Serial.println("MCP9600 HW test");
@@ -175,7 +199,7 @@ void loop() {
 
 
   sensors.requestTemperatures();
-  Serial.println("1w temperature is: ");
+  Serial.print("1wire temperature: ");
   Serial.println(sensors.getTempCByIndex(0));
   strBuffer = String(sensors.getTempCByIndex(0));
   strBuffer.toCharArray(charBuffer, 10);
@@ -194,6 +218,21 @@ void loop() {
   if (!client.publish(mqtt_topic_prefix_rssi, charBuffer, false)) {
     ESP.restart();
     delay(100);
+  }
+
+  Serial.println("==========");
+  if (scale.is_ready())
+  {
+    Serial.print("Weight: ");
+    float weight = scale.get_units(1);
+    Serial.println(weight);
+    strBuffer = String(weight);
+    if (!client.publish(mqtt_topic_prefix_weight, charBuffer, false)) {
+      ESP.restart();
+      delay(100);
+    }
+  } else {
+    Serial.println("HX711 not ready");
   }
 
 
@@ -227,9 +266,15 @@ void loop() {
     sleepval = 6e8;
   } else {
     //50 seconds
-    Serial.println("50s sleep");
-    sleepval = 5e7;
+    //Serial.println("50s sleep");
+    //sleepval = 5e7;
+    //120sec
+    Serial.println("120s sleep");
+    sleepval = 12e7;
   }
+
+  //testing 5s sleep
+  //sleepval = 5e6;
 
   //turn off power
   digitalWrite(MOSFET_PIN, LOW);
