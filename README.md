@@ -7,10 +7,10 @@
   thermocouple probe along with external temperature.  Load cells can be
   connected to the unit at a future date.
 
-  !(web/20240123_130516~2.jpg)
-  !(web/20240123_130532~2.jpg)
-  !(web/img_thermal_1706036679313~2.jpg)
-  !(web/img_thermal_1706036703662~2.jpg)
+  [hive front, visible light](https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/20240123_130516%7E2.jpg)
+  [hive side, visible light](https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/20240123_130532%7E2.jpg)
+  [thermal image, front](https://github.com/tczerwonka/beehive-monitor/blob/master/web/img_thermal_1706036679313~2.jpg)
+  [thermal image, side](https://github.com/tczerwonka/beehive-monitor/blob/master/web/img_thermal_1706036703662~2.jpg)
 
   Max power consumption approx 90ma.  Sleep consumption -- about 9.6mA.
 
