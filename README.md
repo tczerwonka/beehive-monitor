@@ -7,12 +7,18 @@
   thermocouple probe along with external temperature.  Load cells can be
   connected to the unit at a future date.
 
-  Modification of hardware and software -- added mosfet to switch off the
-  the thermocouple board between readings to save power.  If voltage drops
-  below 3.7 volts change update time to 5min instead of 60s.
+  !(web/20240123_130516~2.jpg)
+  !(web/20240123_130532~2.jpg)
+  !(web/img_thermal_1706036679313~2.jpg)
+  !(web/img_thermal_1706036703662~2.jpg)
 
   Max power consumption approx 90ma.  Sleep consumption -- about 9.6mA.
+
+  Using a single 18650 cell with a 10W solar cell and cheap mppt charge
+  controller to power the hardware.
 
   Power save not significantly reduced by disconnecting 1wire.  This is
   approximately in-line with the docs.  Guessing a lot of waste in LDO
   regulator circuit and USB interface.
+
+
