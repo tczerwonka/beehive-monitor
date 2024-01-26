@@ -11,11 +11,11 @@
 
   2day temperature graph
 
-  !(https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/grafana-temp2dy.png)
+  ![2dy temperatures](https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/grafana-temp2dy.png)
 
   7day temperature graph
 
-  !(https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/grafana-temp7dy.png)
+  ![7dy temperatures](https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/grafana-temp7dy.png)
 
   [hive front, photo](https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/20240123_130532%7E2.jpg)
 
