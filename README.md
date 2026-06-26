@@ -1,5 +1,25 @@
 # hive-monitor
 
+  We've been monitoring the temperatures in our bee hives for years.  I started
+  with a single themocouple in a single hive and have expanded to a single unit
+  that covers three hives with four thermocouples plus an external temperature sensor.
+
+  Two version are listed here - the older using an ESP8266 and single themocouple
+  and the newer version using an ESP32-C3 mini and MAX31856 thermcouple interfaces.
+
+# max31856-bee-thermocouple
+
+  Temperature overview - hive 1 is the older project, 3-6 is the newer
+
+  ![All hive temperatures](https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/new_bee_1.png)
+
+  Hives 3-6 - including external.  Hive 6 additionally has a thermocouple at the side
+  of the upper deep.
+
+  ![individual temperatures](https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/new_bee_2.png)
+
+# hive-monitor  
+
   ESP8266 on NodeMCU board to report temperature from a thermocouple
   and 1wire temp sensor via MQTT to my local stats server.  Data visualization
   via grafana.
