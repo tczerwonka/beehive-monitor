@@ -9,6 +9,11 @@
 
 # max31856-bee-thermocouple
 
+  The MAX31856 are connected in parallel with the exception of the CS pins to
+  select the unit for reading.  Their output is far more stable than the other
+  one I was using.  Additionally, I have input voltage monitoring for the single
+  18650 battery, along with a 1-wire temp sensor for hive external ambient temps.
+
   Temperature overview - hive 1 is the older project, 3-6 is the newer
 
   ![All hive temperatures](https://raw.githubusercontent.com/tczerwonka/beehive-monitor/master/web/new_bee_1.png)
